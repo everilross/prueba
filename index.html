@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica Pro</title>
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-calc: #1e293b;
+            --bg-display: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --btn-num: #334155;
+            --btn-num-hover: #475569;
+            --btn-func: #475569;
+            --btn-func-hover: #64748b;
+            --btn-accent: #0ea5e9;
+            --btn-accent-hover: #38bdf8;
+            --btn-clear: #ef4444;
+            --btn-clear-hover: #f87171;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f1f5f9;
+            --bg-calc: #ffffff;
+            --bg-display: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --btn-num: #e2e8f0;
+            --btn-num-hover: #cbd5e1;
+            --btn-func: #cbd5e1;
+            --btn-func-hover: #94a3b8;
+            --btn-accent: #0284c7;
+            --btn-accent-hover: #0ea5e9;
+            --btn-clear: #dc2626;
+            --btn-clear-hover: #ef4444;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+
+        .repo-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--text-muted);
+            color: var(--bg-body);
+        }
+
+        .calculator {
+            background-color: var(--bg-calc);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .display-container {
+            background-color: var(--bg-display);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: right;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            word-break: break-all;
+            overflow: hidden;
+        }
+
+        .history-line {
+            font-size: 14px;
+            color: var(--text-muted);
+            min-height: 20px;
+            line-height: 20px;
+        }
+
+        .main-line {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 40px;
+            margin-top: 8px;
+            white-space: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .main-line::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modes-indicator {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--btn-accent);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            padding: 16px 0;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-number {
+            background-color: var(--btn-num);
+            color: var(--text-main);
+        }
+
+        .btn-number:hover {
+            background-color: var(--btn-num-hover);
+        }
+
+        .btn-function {
+            background-color: var(--btn-func);
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .btn-function:hover {
+            background-color: var(--btn-func-hover);
+        }
+
+        .btn-operator {
+            background-color: var(--btn-func);
+            color: var(--btn-accent);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-operator:hover {
+            background-color: var(--btn-func-hover);
+        }
+
+        .btn-action {
+            background-color: var(--btn-clear);
+            color: #ffffff;
+        }
+
+        .btn-action:hover {
+            background-color: var(--btn-clear-hover);
+        }
+
+        .btn-equals {
+            background-color: var(--btn-accent);
+            color: #ffffff;
+            grid-column: span 1;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .btn-equals:hover {
+            background-color: var(--btn-accent-hover);
+        }
+
+        .active-mode {
+            background-color: rgba(14, 165, 233, 0.15);
+            color: var(--btn-accent);
+            border: 1px solid var(--btn-accent);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 400px) {
+            .calculator {
+                padding: 16px;
+            }
+            button {
+                padding: 12px 0;
+                font-size: 14px;
+            }
+            .main-line {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-controls">
+            <span class="repo-title">scientific-calculator // GitHub Pages</span>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">☀️ Modo Claro</button>
+        </div>
+
+        <div class="calculator">
+            <div class="display-container">
+                <div class="modes-indicator">
+                    <span id="degRadInd">DEG</span>
+                    <span id="memoryInd" style="visibility: hidden;">M</span>
+                </div>
+                <div class="history-line" id="history"></div>
+                <div class="main-line" id="display">0</div>
+            </div>
+
+            <div class="keypad">
+                <!-- Fila 1: Modos y Memoria -->
+                <button class="btn-function" onclick="setDegRad('DEG')" id="btnDeg">DEG</button>
+                <button class="btn-function" onclick="setDegRad('RAD')" id="btnRad">RAD</button>
+                <button class="btn-function" onclick="clearMemory()">MC</button>
+                <button class="btn-function" onclick="recallMemory()">MR</button>
+                <button class="btn-action" onclick="clearAll()">AC</button>
+
+                <!-- Fila 2: Funciones avanzadas 1 -->
+                <button class="btn-function" onclick="inputFunc('sin')">sin</button>
+                <button class="btn-function" onclick="inputFunc('cos')">cos</button>
+                <button class="btn-function" onclick="inputFunc('tan')">tan</button>
+                <button class="btn-function" onclick="addToMemory()">M+</button>
+                <button class="btn-action" onclick="backspace()">DEL</button>
+
+                <!-- Fila 3: Funciones avanzadas 2 -->
+                <button class="btn-function" onclick="inputFunc('ln')">ln</button>
+                <button class="btn-function" onclick="inputFunc('log')">log</button>
+                <button class="btn-function" onclick="inputOp('^')">xʸ</button>
+                <button class="btn-function" onclick="subtractFromMemory()">M-</button>
+                <button class="btn-operator" onclick="inputOp('/')">÷</button>
+
+                <!-- Fila 4: Números y Op Básicos -->
+                <button class="btn-function" onclick="inputFunc('π')">π</button>
+                <button class="btn-number" onclick="inputNum('7')">7</button>
+                <button class="btn-number" onclick="inputNum('8')">8</button>
+                <button class="btn-number" onclick="inputNum('9')">9</button>
+                <button class="btn-operator" onclick="inputOp('*')">×</button>
+
+                <!-- Fila 5 -->
+                <button class="btn-function" onclick="inputFunc('sqrt')">√</button>
+                <button class="btn-number" onclick="inputNum('4')">4</button>
+                <button class="btn-number" onclick="inputNum('5')">5</button>
+                <button class="btn-number" onclick="inputNum('6')">6</button>
+                <button class="btn-operator" onclick="inputOp('-')">−</button>
+
+                <!-- Fila 6 -->
+                <button class="btn-function" onclick="inputFunc('fact')">n!</button>
+                <button class="btn-number" onclick="inputNum('1')">1</button>
+                <button class="btn-number" onclick="inputNum('2')">2</button>
+                <button class="btn-number" onclick="inputNum('3')">3</button>
+                <button class="btn-operator" onclick="inputOp('+')">+</button>
+
+                <!-- Fila 7 -->
+                <button class="btn-function" onclick="inputFunc('e')">e</button>
+                <button class="btn-number" onclick="inputNum('0')">0</button>
+                <button class="btn-number" onclick="inputNum('.')">.</button>
+                <button class="btn-function" onclick="inputParenthesis()">()</button>
+                <button class="btn-equals" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let displayValue = '0';
+        let isAngleDeg = true;
+        let memory = 0;
+        let shouldResetDisplay = false;
+        let parenthesisState = 0; // Para alternar entre ( y )
+
+        const displayEl = document.getElementById('display');
+        const historyEl = document.getElementById('history');
+        const degRadInd = document.getElementById('degRadInd');
+        const memoryInd = document.getElementById('memoryInd');
+
+        // Actualizar estados visuales de modo inicial
+        document.getElementById('btnDeg').classList.add('active-mode');
+
+        function updateDisplay() {
+            displayEl.innerText = displayValue;
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                btn.innerText = '☀️ Modo Claro';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                btn.innerText = '🌙 Modo Oscuro';
+            }
+        }
+
+        function setDegRad(mode) {
+            if (mode === 'DEG') {
+                isAngleDeg = true;
+                document.getElementById('btnDeg').classList.add('active-mode');
+                document.getElementById('btnRad').classList.remove('active-mode');
+                degRadInd.innerText = 'DEG';
+            } else {
+                isAngleDeg = false;
+                document.getElementById('btnRad').classList.add('active-mode');
+                document.getElementById('btnDeg').classList.remove('active-mode');
+                degRadInd.innerText = 'RAD';
+            }
+        }
+
+        function inputNum(num) {
+            if (displayValue === '0' || shouldResetDisplay) {
+                displayValue = num;
+                shouldResetDisplay = false;
+            } else {
+                displayValue += num;
+            }
+            updateDisplay();
+        }
+
+        function inputOp(op) {
+            if (shouldResetDisplay) shouldResetDisplay = false;
+            // Evitar operadores consecutivos duplicados de forma simple
+            const lastChar = displayValue.slice(-1);
+            if (['+', '-', '*', '/', '^'].includes(lastChar)) {
+                displayValue = displayValue.slice(0, -1) + op;
+            } else {
+                displayValue += op;
+            }
+            updateDisplay();
+        }
+
+        function inputFunc(func) {
+            if (shouldResetDisplay) shouldResetDisplay = false;
+            
+            if (func === 'π') {
+                if (displayValue === '0') displayValue = Math.PI.toString();
+                else displayValue += Math.PI;
+            } else if (func === 'e') {
+                if (displayValue === '0') displayValue = Math.E.toString();
+                else displayValue += Math.E;
+            } else {
+                if (displayValue === '0') {
+                    displayValue = func + '(';
+                } else {
+                    displayValue += func + '(';
+                }
+                parenthesisState++;
+            }
+            updateDisplay();
+        }
+
+        function inputParenthesis() {
+            if (shouldResetDisplay) shouldResetDisplay = false;
+            const lastChar = displayValue.slice(-1);
+            
+            if (displayValue === '0') {
+                displayValue = '(';
+                parenthesisState++;
+            } else if (['+', '-', '*', '/', '^', '('].includes(lastChar)) {
+                displayValue += '(';
+                parenthesisState++;
+            } else if (parenthesisState > 0) {
+                displayValue += ')';
+                parenthesisState--;
+            } else {
+                displayValue += '*(';
+                parenthesisState++;
+            }
+            updateDisplay();
+        }
+
+        function clearAll() {
+            displayValue = '0';
+            historyEl.innerText = '';
+            parenthesisState = 0;
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (displayValue.length > 1) {
+                const removed = displayValue.slice(-1);
+                if (removed === '(') parenthesisState = Math.max(0, parenthesisState - 1);
+                if (removed === ')') parenthesisState++;
+                displayValue = displayValue.slice(0, -1);
+            } else {
+                displayValue = '0';
+            }
+            updateDisplay();
+        }
+
+        // Funciones de Memoria
+        function clearMemory() {
+            memory = 0;
+            memoryInd.style.visibility = 'hidden';
+        }
+
+        function recallMemory() {
+            if (shouldResetDisplay) {
+                displayValue = memory.toString();
+                shouldResetDisplay = false;
+            } else {
+                if (displayValue === '0') displayValue = memory.toString();
+                else displayValue += memory.toString();
+            }
+            updateDisplay();
+        }
+
+        function addToMemory() {
+            try {
+                let current = parseExpression(displayValue);
+                memory += current;
+                memoryInd.style.visibility = 'visible';
+                shouldResetDisplay = true;
+            } catch (e) {
+                displayEl.innerText = 'Error';
+            }
+        }
+
+        function subtractFromMemory() {
+            try {
+                let current = parseExpression(displayValue);
+                memory -= current;
+                memoryInd.style.visibility = 'visible';
+                shouldResetDisplay = true;
+            } catch (e) {
+                displayEl.innerText = 'Error';
+            }
+        }
+
+        // Intérprete y evaluación matemática segura y adaptada a funciones científicas
+        function parseExpression(expr) {
+            // Reemplazar operadores visuales por internos si existieran
+            let tokens = expr.replace(/×/g, '*').replace(/÷/g, '/');
+            
+            // Cerrar paréntesis faltantes automáticamente para evitar errores sintácticos sencillos
+            let openP = (tokens.match(/\(/g) || []).length;
+            let closeP = (tokens.match(/\)/g) || []).length;
+            while (openP > closeP) {
+                tokens += ')';
+                closeP++;
+            }
+
+            // Preparar funciones trigonométricas y matemáticas básicas en JS
+            const degToRad = val => val * (Math.PI / 180);
+            
+            // Inyectar wrappers personalizados para procesamiento secuencial interno
+            // Procesamos mediante regex controlados funciones específicas de cadena
+            
+            // Factorial helper
+            const fact = num => {
+                if (num < 0) return NaN;
+                if (num === 0 || num === 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= num; i++) result *= i;
+                return result;
+            };
+
+            // Implementación segura evaluando expresiones internas vía objetos matemáticos controlados
+            // Se transforma la string mapeando tokens conocidos a Math.[función]
+            let contextExpr = tokens
+                .replace(/sin\(([^)]+)\)/g, (m, p1) => {
+                    let v = eval(p1);
+                    return `Math.sin(${isAngleDeg ? degToRad(v) : v})`;
+                })
+                .replace(/cos\(([^)]+)\)/g, (m, p1) => {
+                    let v = eval(p1);
+                    return `Math.cos(${isAngleDeg ? degToRad(v) : v})`;
+                })
+                .replace(/tan\(([^)]+)\)/g, (m, p1) => {
+                    let v = eval(p1);
+                    return `Math.tan(${isAngleDeg ? degToRad(v) : v})`;
+                })
+                .replace(/log\(([^)]+)\)/g, (m, p1) => `Math.log10(${p1})`)
+                .replace(/ln\(([^)]+)\)/g, (m, p1) => `Math.log(${p1})`)
+                .replace(/sqrt\(([^)]+)\)/g, (m, p1) => `Math.sqrt(${p1})`)
+                .replace(/fact\(([^)]+)\)/g, (m, p1) => `${fact(parseInt(eval(p1)))}`)
+                .replace(/\^/g, '**'); // Potenciación estándar ES6
+
+            // Ejecución final limpia
+            let res = Function(`"use strict"; return (${contextExpr})`)();
+            if (isNaN(res) || !isFinite(res)) throw new Error("Cálculo Inválido");
+            return res;
+        }
+
+        function calculate() {
+            if (displayValue.trim() === '') return;
+            try {
+                historyEl.innerText = displayValue + ' =';
+                let result = parseExpression(displayValue);
+                
+                // Formatear decimales largos para evitar desbordes visuales
+                if (result.toString().includes('.') && result.toString().split('.')[1].length > 8) {
+                    result = parseFloat(result.toFixed(8));
+                }
+                
+                displayValue = result.toString();
+                shouldResetDisplay = true;
+                parenthesisState = 0;
+            } catch (err) {
+                historyEl.innerText = displayValue;
+                displayValue = 'Error';
+                shouldResetDisplay = true;
+                parenthesisState = 0;
+            }
+            updateDisplay();
+        }
+
+        // Soporte básico para teclado físico
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            if (/[0-9.]/.test(key)) inputNum(key);
+            else if (['+', '-', '*', '/'].includes(key)) inputOp(key);
+            else if (key === 'Enter' || key === '=') calculate();
+            else if (key === 'Escape') clearAll();
+            else if (key === 'Backspace') backspace();
+        });
+    </script>
+</body>
+</html>
