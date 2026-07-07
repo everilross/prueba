@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Científica Pro</title>
+    <title>Calculadora Científica - Campo Llano</title>
     <style>
         :root {
             --bg-body: #0f172a;
@@ -15,8 +15,8 @@
             --btn-num-hover: #475569;
             --btn-func: #475569;
             --btn-func-hover: #64748b;
-            --btn-accent: #0ea5e9;
-            --btn-accent-hover: #38bdf8;
+            --btn-accent: #009e4f; /* Verde adaptado al logo de Campo Llano */
+            --btn-accent-hover: #00c060;
             --btn-clear: #ef4444;
             --btn-clear-hover: #f87171;
             --shadow: rgba(0, 0, 0, 0.4);
@@ -32,8 +32,8 @@
             --btn-num-hover: #cbd5e1;
             --btn-func: #cbd5e1;
             --btn-func-hover: #94a3b8;
-            --btn-accent: #0284c7;
-            --btn-accent-hover: #0ea5e9;
+            --btn-accent: #008f46; /* Verde adaptado al logo de Campo Llano */
+            --btn-accent-hover: #00ad55;
             --btn-clear: #dc2626;
             --btn-clear-hover: #ef4444;
             --shadow: rgba(0, 0, 0, 0.1);
@@ -69,14 +69,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             padding: 0 8px;
         }
 
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            height: 40px; /* Tamaño del logo */
+            width: auto;
+            border-radius: 8px;
+            background-color: #ffffff; /* Fondo blanco para que el logo resalte bien en modo oscuro */
+            padding: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .repo-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
             letter-spacing: 0.5px;
         }
 
@@ -84,7 +99,7 @@
             background: none;
             border: 1px solid var(--text-muted);
             color: var(--text-main);
-            padding: 4px 12px;
+            padding: 6px 12px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 12px;
@@ -228,12 +243,11 @@
         }
 
         .active-mode {
-            background-color: rgba(14, 165, 233, 0.15);
+            background-color: rgba(0, 158, 79, 0.15); /* Ajustado al verde */
             color: var(--btn-accent);
             border: 1px solid var(--btn-accent);
         }
 
-        /* Responsive adjustments */
         @media (max-width: 400px) {
             .calculator {
                 padding: 16px;
@@ -245,6 +259,12 @@
             .main-line {
                 font-size: 26px;
             }
+            .brand-logo {
+                height: 32px;
+            }
+            .repo-title {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -252,7 +272,12 @@
 
     <div class="container">
         <div class="header-controls">
-            <span class="repo-title">scientific-calculator // GitHub Pages</span>
+            <!-- Sección del Logo -->
+            <div class="brand">
+                <img src="logo.jpg" alt="Logo Campo Llano" class="brand-logo" onerror="this.style.display='none'">
+                <span class="repo-title">CAMPO LLANO</span>
+            </div>
+            
             <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">☀️ Modo Claro</button>
         </div>
 
@@ -267,49 +292,42 @@
             </div>
 
             <div class="keypad">
-                <!-- Fila 1: Modos y Memoria -->
                 <button class="btn-function" onclick="setDegRad('DEG')" id="btnDeg">DEG</button>
                 <button class="btn-function" onclick="setDegRad('RAD')" id="btnRad">RAD</button>
                 <button class="btn-function" onclick="clearMemory()">MC</button>
                 <button class="btn-function" onclick="recallMemory()">MR</button>
                 <button class="btn-action" onclick="clearAll()">AC</button>
 
-                <!-- Fila 2: Funciones avanzadas 1 -->
                 <button class="btn-function" onclick="inputFunc('sin')">sin</button>
                 <button class="btn-function" onclick="inputFunc('cos')">cos</button>
                 <button class="btn-function" onclick="inputFunc('tan')">tan</button>
                 <button class="btn-function" onclick="addToMemory()">M+</button>
                 <button class="btn-action" onclick="backspace()">DEL</button>
 
-                <!-- Fila 3: Funciones avanzadas 2 -->
                 <button class="btn-function" onclick="inputFunc('ln')">ln</button>
                 <button class="btn-function" onclick="inputFunc('log')">log</button>
                 <button class="btn-function" onclick="inputOp('^')">xʸ</button>
                 <button class="btn-function" onclick="subtractFromMemory()">M-</button>
                 <button class="btn-operator" onclick="inputOp('/')">÷</button>
 
-                <!-- Fila 4: Números y Op Básicos -->
                 <button class="btn-function" onclick="inputFunc('π')">π</button>
                 <button class="btn-number" onclick="inputNum('7')">7</button>
                 <button class="btn-number" onclick="inputNum('8')">8</button>
                 <button class="btn-number" onclick="inputNum('9')">9</button>
                 <button class="btn-operator" onclick="inputOp('*')">×</button>
 
-                <!-- Fila 5 -->
                 <button class="btn-function" onclick="inputFunc('sqrt')">√</button>
                 <button class="btn-number" onclick="inputNum('4')">4</button>
                 <button class="btn-number" onclick="inputNum('5')">5</button>
                 <button class="btn-number" onclick="inputNum('6')">6</button>
                 <button class="btn-operator" onclick="inputOp('-')">−</button>
 
-                <!-- Fila 6 -->
                 <button class="btn-function" onclick="inputFunc('fact')">n!</button>
                 <button class="btn-number" onclick="inputNum('1')">1</button>
                 <button class="btn-number" onclick="inputNum('2')">2</button>
                 <button class="btn-number" onclick="inputNum('3')">3</button>
                 <button class="btn-operator" onclick="inputOp('+')">+</button>
 
-                <!-- Fila 7 -->
                 <button class="btn-function" onclick="inputFunc('e')">e</button>
                 <button class="btn-number" onclick="inputNum('0')">0</button>
                 <button class="btn-number" onclick="inputNum('.')">.</button>
@@ -324,14 +342,13 @@
         let isAngleDeg = true;
         let memory = 0;
         let shouldResetDisplay = false;
-        let parenthesisState = 0; // Para alternar entre ( y )
+        let parenthesisState = 0;
 
         const displayEl = document.getElementById('display');
         const historyEl = document.getElementById('history');
         const degRadInd = document.getElementById('degRadInd');
         const memoryInd = document.getElementById('memoryInd');
 
-        // Actualizar estados visuales de modo inicial
         document.getElementById('btnDeg').classList.add('active-mode');
 
         function updateDisplay() {
@@ -376,7 +393,6 @@
 
         function inputOp(op) {
             if (shouldResetDisplay) shouldResetDisplay = false;
-            // Evitar operadores consecutivos duplicados de forma simple
             const lastChar = displayValue.slice(-1);
             if (['+', '-', '*', '/', '^'].includes(lastChar)) {
                 displayValue = displayValue.slice(0, -1) + op;
@@ -446,7 +462,6 @@
             updateDisplay();
         }
 
-        // Funciones de Memoria
         function clearMemory() {
             memory = 0;
             memoryInd.style.visibility = 'hidden';
@@ -485,12 +500,9 @@
             }
         }
 
-        // Intérprete y evaluación matemática segura y adaptada a funciones científicas
         function parseExpression(expr) {
-            // Reemplazar operadores visuales por internos si existieran
             let tokens = expr.replace(/×/g, '*').replace(/÷/g, '/');
             
-            // Cerrar paréntesis faltantes automáticamente para evitar errores sintácticos sencillos
             let openP = (tokens.match(/\(/g) || []).length;
             let closeP = (tokens.match(/\)/g) || []).length;
             while (openP > closeP) {
@@ -498,13 +510,8 @@
                 closeP++;
             }
 
-            // Preparar funciones trigonométricas y matemáticas básicas en JS
             const degToRad = val => val * (Math.PI / 180);
             
-            // Inyectar wrappers personalizados para procesamiento secuencial interno
-            // Procesamos mediante regex controlados funciones específicas de cadena
-            
-            // Factorial helper
             const fact = num => {
                 if (num < 0) return NaN;
                 if (num === 0 || num === 1) return 1;
@@ -513,8 +520,6 @@
                 return result;
             };
 
-            // Implementación segura evaluando expresiones internas vía objetos matemáticos controlados
-            // Se transforma la string mapeando tokens conocidos a Math.[función]
             let contextExpr = tokens
                 .replace(/sin\(([^)]+)\)/g, (m, p1) => {
                     let v = eval(p1);
@@ -532,9 +537,8 @@
                 .replace(/ln\(([^)]+)\)/g, (m, p1) => `Math.log(${p1})`)
                 .replace(/sqrt\(([^)]+)\)/g, (m, p1) => `Math.sqrt(${p1})`)
                 .replace(/fact\(([^)]+)\)/g, (m, p1) => `${fact(parseInt(eval(p1)))}`)
-                .replace(/\^/g, '**'); // Potenciación estándar ES6
+                .replace(/\^/g, '**');
 
-            // Ejecución final limpia
             let res = Function(`"use strict"; return (${contextExpr})`)();
             if (isNaN(res) || !isFinite(res)) throw new Error("Cálculo Inválido");
             return res;
@@ -546,7 +550,6 @@
                 historyEl.innerText = displayValue + ' =';
                 let result = parseExpression(displayValue);
                 
-                // Formatear decimales largos para evitar desbordes visuales
                 if (result.toString().includes('.') && result.toString().split('.')[1].length > 8) {
                     result = parseFloat(result.toFixed(8));
                 }
@@ -563,7 +566,6 @@
             updateDisplay();
         }
 
-        // Soporte básico para teclado físico
         document.addEventListener('keydown', (e) => {
             const key = e.key;
             if (/[0-9.]/.test(key)) inputNum(key);
